@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "672506755262",
+    "project_id": "kannalles-e27ef",
+    "storage_bucket": "kannalles-e27ef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672506755262:android:e3f996bacdb9699b24c6ef",
+        "android_client_info": {
+          "package_name": "kann.alles"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCDb5EO-v2MnTnXJQzv82_kUERu4piXojk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
