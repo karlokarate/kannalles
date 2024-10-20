@@ -1,0 +1,76 @@
+workflows:
+  flutter_workflow:
+    name: Flutter CI/CD Pipeline
+    instance_type: mac_mini  # Wähle macOS-Instanz, um sowohl iOS- als auch Android-Builds zu unterstützen
+    environment:
+      flutter: stable  # Verwende die stabile Flutter-Version
+      xcode: latest    # Verwende die neueste Xcode-Version für iOS-Builds
+      # Optionale Umgebungsvariablen
+      vars:
+        ANDROID_KEYSTORE: ${{ANDROID_KEYSTORE}}
+        ANDROID_KEYSTORE_PASSWORD: ${{ANDROID_KEYSTORE_PASSWORD}}
+        ANDROID_KEY_ALIAS: ${{ANDROID_KEY_ALIAS}}
+        ANDROID_KEY_PASSWORD: ${{ANDROID_KEY_PASSWORD}}
+        APPLE_SIGNING_CERTIFICATE: ${{APPLE_SIGNING_CERTIFICATE}}
+    triggering:
+      events:
+        - push
+        - pull_request
+    scripts:
+      - name: Install Flutter dependencies
+        script: flutter pub get
+      - name: Run Flutter tests
+        script: flutter test
+      - name: Build Android APK
+        script: flutter build apk --release
+      - name: Build iOS IPA
+        script: flutter build ios --release --no-codesign
+    artifacts:
+      - build/**/outputs/**/*.apk  # Speichere das Android APK als Artefakt
+      - build/ios/iphoneos/*.app   # Speichere das iOS Build-Artefakt
+    publishing:
+      email:
+        recipients:
+          - your_email@example.com
+        subject: "Build #${BUILD_NUMBER} - ${WORKFLOW_NAME} is finished!"
+        body: |
+          Build finished successfully.
+
+  release_workflow:
+    name: Release Workflow
+    instance_type: mac_mini
+    environment:
+      flutter: stable
+      xcode: latest
+      vars:
+        ANDROID_KEYSTORE: ${{ANDROID_KEYSTORE}}
+        ANDROID_KEYSTORE_PASSWORD: ${{ANDROID_KEYSTORE_PASSWORD}}
+        ANDROID_KEY_ALIAS: ${{ANDROID_KEY_ALIAS}}
+        ANDROID_KEY_PASSWORD: ${{ANDROID_KEY_PASSWORD}}
+        APPLE_SIGNING_CERTIFICATE: ${{APPLE_SIGNING_CERTIFICATE}}
+    scripts:
+      - name: Install Flutter dependencies
+        script: flutter pub get
+      - name: Build signed Android APK
+        script: |
+          flutter build apk --release \
+          --no-shrink \
+          --dart-define=KEYSTORE_PATH=${ANDROID_KEYSTORE} \
+          --dart-define=KEY_ALIAS=${ANDROID_KEY_ALIAS}
+      - name: Build signed iOS IPA
+        script: |
+          flutter build ipa --release \
+          --no-codesign
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/ios/iphoneos/*.ipa
+    publishing:
+      google_play:
+        credentials: ${{GOOGLE_PLAY_CREDENTIALS}}
+        track: production
+        apk: build/app/outputs/flutter-apk/app-release.apk
+      app_store_connect:
+        apple_id: ${{APPLE_ID}}
+        team_id: ${{APPLE_TEAM_ID}}
+        api_key: ${{APP_STORE_API_KEY}}
+        ipa: build/ios/iphoneos/*.ipa
