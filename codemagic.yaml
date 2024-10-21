@@ -31,7 +31,7 @@ workflows:
     publishing:
       email:
         recipients:
-          - your_email@example.com
+          - chrisfischtopher@googlemail.com
         subject: "Build #${BUILD_NUMBER} - ${WORKFLOW_NAME} is finished!"
         body: |
           Build finished successfully.
