@@ -143,6 +143,7 @@ async def get_folders():
 #  Raw-History & Suche
 # --------------------------------------------------------------------------- #
 def _msg_to_dict(m):
+    logger.debug("[TG MSG] %s", m.stringify())
     if m.photo:
         tp,sz,mt,dur,cap,txt="photo",None,"",None,"",""
     elif isinstance(m.media, MessageMediaDocument):
@@ -159,6 +160,8 @@ async def history_raw(payload: Dict[str,int]=Body(...)):
     require_client(); cid=payload["chat_id"]; limit=int(payload.get("limit",500))
     async with client_lock:
         msgs=await tg_client.get_messages(cid, limit=limit)
+        for m in msgs:
+            logger.debug("[HISTORY_RAW] %s", m.stringify())
     return [_msg_to_dict(m) for m in msgs]
 
 @app.post("/search")
@@ -168,6 +171,8 @@ async def search(payload: Dict=Body(...)):
     cid=payload["chat_id"]; query=payload["query"]; limit=int(payload.get("limit",50))
     async with client_lock:
         msgs=await tg_client.get_messages(cid, limit=limit, search=query)
+        for m in msgs:
+            logger.debug("[SEARCH] %s", m.stringify())
     return [_msg_to_dict(m) for m in msgs]
 
 # --------------------------------------------------------------------------- #
@@ -188,6 +193,7 @@ async def poster(chat_id:int, msg_id:int):
     require_client()
     async with client_lock:
         msg = await tg_client.get_messages(chat_id, ids=msg_id)
+        logger.debug("[POSTER] %s", msg.stringify())
         data = None
         if msg.photo:
             data = await tg_client.download_media(msg.photo, file=bytes)
@@ -203,7 +209,9 @@ async def poster(chat_id:int, msg_id:int):
 ACTIVE,CANCEL={},{}
 async def _tg_to_file(chat_id:int,msg_id:int,fp:Path):
     require_client(); key=(chat_id,msg_id); CANCEL[key]=asyncio.Event()
-    async with client_lock: msg=await tg_client.get_messages(chat_id, ids=msg_id)
+    async with client_lock:
+        msg=await tg_client.get_messages(chat_id, ids=msg_id)
+        logger.debug("[STREAM] %s", msg.stringify())
     def prog(cur,total):
         if CANCEL[key].is_set(): raise asyncio.CancelledError()
     await tg_client.download_media(msg.media, file=str(fp),

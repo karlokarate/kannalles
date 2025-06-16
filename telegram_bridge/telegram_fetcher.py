@@ -73,6 +73,7 @@ def _speed_pragmas(conn: sqlite3.Connection):
     conn.execute("PRAGMA temp_store=MEMORY")
 
 def _open_db(path: Path) -> sqlite3.Connection:
+    xbmc.log(f"[DB] open {path}", xbmc.LOGDEBUG)
     conn = sqlite3.connect(path)
     _speed_pragmas(conn)
     conn.execute(
@@ -113,6 +114,7 @@ def _open_db(path: Path) -> sqlite3.Connection:
 def _safe_execute(conn: sqlite3.Connection, q: str, p: Tuple[Any, ...] = ()):
     for _ in range(3):
         try:
+            xbmc.log(f"[DB] exec {q} {p}", xbmc.LOGDEBUG)
             conn.execute(q, p); return
         except sqlite3.OperationalError as e:
             if "locked" in str(e):
@@ -433,6 +435,8 @@ def fetch_and_store(chat_id:int, dialog=None, sync_type:str="movie",
             if dialog and n%5==0:
                 dialog.update(int((n+1)/len(entries)*100))
             if (n+1)%BATCH_SIZE==0: conn.commit()
+        xbmc.log("[DB] commit", xbmc.LOGDEBUG)
         conn.commit()
     finally:
+        xbmc.log("[DB] close", xbmc.LOGDEBUG)
         conn.close()
