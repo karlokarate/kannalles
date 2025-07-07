@@ -1,0 +1,33 @@
+<settings>
+<!--   Telegram-Zugang   -->
+<category label="Telegram">
+<setting id="api_id" type="text" default="" option="number" label="API ID"/>
+<setting id="api_hash" type="text" default="" option="hidden" label="API Hash"/>
+<setting id="session_name" type="text" default="kodi" label="Sitzungsname"/>
+<setting id="phone_number" type="text" default="" option="hidden" label="Telefonnummer (optional)"/>
+</category>
+<!--   Bridge   -->
+<category label="Bridge">
+<setting id="bridge_host" type="text" default="127.0.0.1" label="Bridge-Host"/>
+<setting id="bridge_port" type="number" default="5000" label="Bridge-Port"/>
+<setting id="bridge_url" type="text" default="" label="Bridge-URL (überschreibt Host/Port)"/>
+<setting id="temp_dir" type="folder" default="" label="Temporäres Verzeichnis"/>
+<setting id="cleanup_days" type="number" default="3" label="Cleanup – Tage"/>
+</category>
+<!--   Chat-Filter (Platzhalter)   -->
+<category label="Chat-Filter">
+<setting id="show_channels" type="bool" default="true" label="Channels anzeigen"/>
+<setting id="show_groups" type="bool" default="true" label="Gruppen anzeigen"/>
+<setting id="show_users" type="bool" default="false" label="Private Chats anzeigen"/>
+<setting id="use_folder_filter" type="bool" default="true" label="Zuerst nach Ordnern filtern"/>
+</category>
+<!--   Sync-Optionen (Platzhalter)   -->
+<category label="Sync">
+<setting id="default_movie_limit" type="number" default="1000" label="Standard-Filmlimit"/>
+<setting id="parallel_downloads" type="number" default="8" label="Parallele Poster-Downloads"/>
+<setting id="folder_movies" type="text" default="Filme" label="Telegram-Ordner für Filme"/>
+<setting id="folder_movies_id" type="text" default="" visible="false" label="(intern) Telegram-Ordner-ID für Filme"/>
+<setting id="folder_series" type="text" default="Serien" label="Telegram-Ordner für Serien"/>
+<setting id="folder_series_id" type="text" default="" visible="false" label="(intern) Telegram-Ordner-ID für Serien"/>
+</category>
+</settings>
